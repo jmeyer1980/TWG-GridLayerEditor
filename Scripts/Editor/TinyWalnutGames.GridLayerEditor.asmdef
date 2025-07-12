@@ -1,0 +1,19 @@
+{
+  "name": "TinyWalnutGames.GridLayerEditor",
+  "rootNamespace": "TinyWalnutGames.GridLayerEditor",
+  "references": [
+    "TinyWalnutGames.GridLayerConfig",
+    "UnityEditor",
+    "UnityEngine.TilemapModule"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": []
+}
