@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.UIElements;
 
 namespace TinyWalnutGames.GridLayerEditor
 {
@@ -22,21 +23,21 @@ namespace TinyWalnutGames.GridLayerEditor
         /// </summary>
         private static readonly string[] PlatformerLayers = new string[]
         {
-                "Blending",
-                "RoomMasking",
-                "ForegroundProps",
-                "Hazards",
-                "WalkableProps",
-                "WalkableGround",
-                "BackgroundProps",
-                "Background1",
-                "Background2",
-                "Foreground",
-                "Parallax1",
-                "Parallax2",
-                "Parallax3",
-                "Parallax4",
-                "Parallax5",
+            "Parallax5",
+            "Parallax4",
+            "Parallax3",
+            "Parallax2",
+            "Parallax1",
+            "Background2",
+            "Background1",
+            "BackgroundProps",
+            "WalkableGround",
+            "WalkableProps",
+            "Hazards",
+            "Foreground",
+            "ForegroundProps",
+            "RoomMasking",
+            "Blending",
         };
 
         /// <summary>
@@ -44,16 +45,16 @@ namespace TinyWalnutGames.GridLayerEditor
         /// </summary>
         private static readonly string[] TopDownLayers = new string[]
         {
-                "Blending",
-                "RoomMasking",
-                "OverheadProps",
-                "WalkableProps",
-                "WalkableGround",
-                "FloorProps",
-                "Floor",
-                "ShallowWater",
+                "DeepOcean",
                 "Ocean",
-                "DeepOcean"
+                "ShallowWater",
+                "Floor",
+                "FloorProps",
+                "WalkableGround",
+                "WalkableProps",
+                "OverheadProps",
+                "RoomMasking",
+                "Blending",
         };
 
         /// <summary>

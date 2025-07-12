@@ -20,21 +20,21 @@ namespace TinyWalnutGames.GridLayerEditor
         /// </summary>
         public enum SideScrollingLayers
         {
-            Blending,
-            RoomMasking,
-            ForegroundProps,
-            Hazards,
-            WalkableProps,
-            WalkableGround,
-            BackgroundProps,
-            Background1,
-            Background2,
-            Foreground,
-            Parallax1,
-            Parallax2,
-            Parallax3,
-            Parallax4,
             Parallax5,
+            Parallax4,
+            Parallax3,
+            Parallax2,
+            Parallax1,
+            Background2,
+            Background1,
+            BackgroundProps,
+            WalkableGround,
+            WalkableProps,
+            Hazards,
+            Foreground,
+            ForegroundProps,
+            RoomMasking,
+            Blending,
         }
 
         /// <summary>
@@ -45,10 +45,13 @@ namespace TinyWalnutGames.GridLayerEditor
         {
             var gridGO = new GameObject("Side-Scrolling Grid", typeof(Grid));
             gridGO.transform.position = Vector3.zero;
+            int layerCount = Enum.GetValues(typeof(SideScrollingLayers)).Length;
             int index = 0;
             foreach (SideScrollingLayers layer in Enum.GetValues(typeof(SideScrollingLayers)))
             {
-                CreateTilemapLayer(gridGO.transform, layer.ToString(), index++);
+                int flippedZ = layerCount - 1 - index;
+                CreateTilemapLayer(gridGO.transform, layer.ToString(), flippedZ);
+                index++;
             }
         }
 
@@ -67,31 +70,33 @@ namespace TinyWalnutGames.GridLayerEditor
         /// </summary>
         public enum TopDownLayers
         {
-            Blending,
-            RoomMasking,
-            OverheadProps,
-            WalkableProps,
-            WalkableGround,
-            FloorProps,
-            Floor,
-            ShallowWater,
+            DeepOcean,
             Ocean,
-            DeepOcean
+            ShallowWater,
+            Floor,
+            FloorProps,
+            WalkableGround,
+            WalkableProps,
+            OverheadProps,
+            RoomMasking,
+            Blending,
         }
 
         /// <summary>
         /// Creates a top-down grid in the scene with top-down layers.
         /// </summary>
         [MenuItem("Tiny Walnut Games/Create Default Top-Down Grid")]
-
         public static void CreateDefaultTopDownGrid()
         {
             var gridGO = new GameObject("Top-Down Grid", typeof(Grid));
             gridGO.transform.position = Vector3.zero;
+            int layerCount = Enum.GetValues(typeof(TopDownLayers)).Length;
             int index = 0;
             foreach (TopDownLayers layer in Enum.GetValues(typeof(TopDownLayers)))
             {
-                CreateTilemapLayer(gridGO.transform, layer.ToString(), index++);
+                int flippedZ = layerCount - 1 - index;
+                CreateTilemapLayer(gridGO.transform, layer.ToString(), flippedZ);
+                index++;
             }
         }
 
@@ -146,9 +151,11 @@ namespace TinyWalnutGames.GridLayerEditor
             gridGO.transform.position = Vector3.zero;
             var grid = gridGO.GetComponent<Grid>();
             grid.cellLayout = GridLayout.CellLayout.Isometric;
-            for (int i = 0; i < IsometricTopDownLayers.Length; i++)
+            int layerCount = IsometricTopDownLayers.Length;
+            for (int i = 0; i < layerCount; i++)
             {
-                CreateTilemapLayer(gridGO.transform, IsometricTopDownLayers[i], i);
+                int flippedZ = layerCount - 1 - i;
+                CreateTilemapLayer(gridGO.transform, IsometricTopDownLayers[i], flippedZ);
             }
         }
 
@@ -171,9 +178,11 @@ namespace TinyWalnutGames.GridLayerEditor
             gridGO.transform.position = Vector3.zero;
             var grid = gridGO.GetComponent<Grid>();
             grid.cellLayout = GridLayout.CellLayout.Hexagon;
-            for (int i = 0; i < HexTopDownLayers.Length; i++)
+            int layerCount = HexTopDownLayers.Length;
+            for (int i = 0; i < layerCount; i++)
             {
-                CreateTilemapLayer(gridGO.transform, HexTopDownLayers[i], i);
+                int flippedZ = layerCount - 1 - i;
+                CreateTilemapLayer(gridGO.transform, HexTopDownLayers[i], flippedZ);
             }
         }
 
@@ -200,9 +209,11 @@ namespace TinyWalnutGames.GridLayerEditor
 
             var gridGO = new GameObject("Custom Grid", typeof(Grid));
             gridGO.transform.position = Vector3.zero;
-            for (int i = 0; i < layerNames.Length; i++)
+            int layerCount = layerNames.Length;
+            for (int i = 0; i < layerCount; i++)
             {
-                CreateTilemapLayer(gridGO.transform, layerNames[i], i);
+                int flippedZ = layerCount - 1 - i;
+                CreateTilemapLayer(gridGO.transform, layerNames[i], flippedZ);
             }
         }
 
@@ -212,12 +223,12 @@ namespace TinyWalnutGames.GridLayerEditor
         /// </summary>
         /// <param name="parent">Parent transform for the new GameObject.</param>
         /// <param name="layerName">Name of the layer for the GameObject.</param>
-        /// <param name="index">Index used for z-offset.</param>
-        private static void CreateTilemapLayer(Transform parent, string layerName, int index)
+        /// <param name="zDepth">Z-depth used for positioning.</param>
+        private static void CreateTilemapLayer(Transform parent, string layerName, int zDepth)
         {
             var tmGO = new GameObject(layerName, typeof(Tilemap), typeof(TilemapRenderer));
             tmGO.transform.SetParent(parent, worldPositionStays: false);
-            tmGO.transform.localPosition = new Vector3(0, 0, -index);
+            tmGO.transform.localPosition = new Vector3(0, 0, zDepth);
 
             // Try to set Unity layer by name; warn if not found
             int unityLayer = LayerMask.NameToLayer(layerName);

@@ -13,22 +13,22 @@ namespace TinyWalnutGames.GridLayerEditor
         /// </summary>
         public string[] layerNames = new string[]
         {
-                // Default to platformer layers
-                "Blending",
-                "RoomMasking",
-                "ForegroundProps",
-                "Foreground",
-                "WalkableProps",
-                "Hazards",
-                "WalkableGround",
-                "BackgroundProps",
-                "Background1",
-                "Background2",
-                "Parallax1",
-                "Parallax2",
-                "Parallax3",
-                "Parallax4",
-                "Parallax5"
+            // Default to platformer layers
+            "Parallax5",
+            "Parallax4",
+            "Parallax3",
+            "Parallax2",
+            "Parallax1",
+            "Background2",
+            "Background1",
+            "BackgroundProps",
+            "WalkableGround",
+            "WalkableProps",
+            "Hazards",
+            "Foreground",
+            "ForegroundProps",
+            "RoomMasking",
+            "Blending",
         };
     }
 }
