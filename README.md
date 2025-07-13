@@ -1,5 +1,7 @@
 # Tiny Walnut Games Grid Layer System
 
+Tutorial video: https://youtu.be/z6JuMheYuuc?si=yRFe3AO61SIR7Yvg
+
 This package provides a flexible grid layer configuration system for Unity 2D games, supporting platformer, top-down, isometric, and hexagonal grid setups.
 
 ## Features
@@ -7,6 +9,14 @@ This package provides a flexible grid layer configuration system for Unity 2D ga
 - **GridLayerConfig**: ScriptableObject for storing custom grid layer names.
 - **Editor Tools**: Create, edit, and apply grid layer templates via menu and context options.
 - **Grid Creation**: Instantly spawn grids with multiple tilemap layers for various genres and layouts.
+
+## Installation
+
+1. **Open your Unity project**
+
+2. **Import the package using one of the below methods**
+   - Use the github URL: https://github.com/jmeyer1980/TWG-GridLayerEditor
+   - Use the NuGet package using the dotnet/nuget cmd prompt: `dotnet add package TWG.GridLayerEditor --version 1.0.1`
 
 ## Usage
 
