@@ -1,0 +1,26 @@
+{
+  "name": "com.tinywalnutgames.gridlayereditor",
+  "version": "1.1.0",
+  "displayName": "TWG Grid Layer Editor",
+  "description": "A Unity Editor extension that automates Grid and Tilemap layer setup for 2D games. Features columnar UI, automatic layer creation, and support for platformer, top-down, isometric, and hexagonal grid types.",
+  "unity": "2021.3",
+  "unityRelease": "0f1",
+  "documentationUrl": "https://github.com/jmeyer1980/TWG-GridLayerEditor/wiki",
+  "changelogUrl": "https://github.com/jmeyer1980/TWG-GridLayerEditor/blob/main/CHANGELOG.md",
+  "licensesUrl": "https://github.com/jmeyer1980/TWG-GridLayerEditor/blob/main/LICENSE",
+  "keywords": [
+    "grid",
+    "tilemap",
+    "automation", 
+    "2d",
+    "platformer",
+    "topdown",
+    "editor",
+    "layers"
+  ],
+  "author": {
+    "name": "Tiny Walnut Games",
+    "email": "jmeyer1980@gmail.com",
+    "url": "https://github.com/jmeyer1980"
+  }
+}

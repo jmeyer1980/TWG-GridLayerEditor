@@ -2,19 +2,38 @@
 <package>
   <metadata>
     <id>TWG.GridLayerEditor</id>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
+    <title>TWG Grid Layer Editor</title>
     <authors>jmeyer1980</authors>
-    <description>Helps automate Grid and Tilemap layer setup.</description>
+    <owners>Tiny Walnut Games</owners>
+    <description>A Unity Editor extension that automates Grid and Tilemap layer setup for 2D games. Features columnar UI, automatic layer creation, and support for platformer, top-down, isometric, and hexagonal grid types.</description>
+    <summary>Streamlines Unity 2D grid and tilemap layer creation with smart presets and intuitive editor tools.</summary>
     <licenseUrl>https://github.com/jmeyer1980/TWG-GridLayerEditor/blob/main/LICENSE</licenseUrl>
     <projectUrl>https://github.com/jmeyer1980/TWG-GridLayerEditor</projectUrl>
+    <repository type="git" url="https://github.com/jmeyer1980/TWG-GridLayerEditor.git" />
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <tags>grid tilemap automation unity</tags>
+    <tags>unity grid tilemap automation 2d platformer topdown editor layers unity3d gamedev</tags>
     <readme>README.md</readme>
+    <releaseNotes>
+      Version 1.1.0:
+      - Added columnar layout for Grid Layer Editor window
+      - Added comprehensive LayerManager for automatic layer creation  
+      - Improved UI with scroll views and better organization
+      - Fixed window expansion issues with many layers
+      - Enhanced layer validation and error handling
+    </releaseNotes>
+    <dependencies>
+      <group targetFramework=".NETFramework4.7.1">
+        <dependency id="Unity3D" version="2021.3.0" />
+      </group>
+    </dependencies>
   </metadata>
   <files>
     <file src="README.md" target="README.md" />
     <file src="LICENSE" target="LICENSE" />
-    <file src="*.asmdef" target="contentFiles\any\any\" />
-    <file src="Scripts\Editor\**\*" target="contentFiles\any\any\Scripts\Editor\" />
+    <file src="CHANGELOG.md" target="CHANGELOG.md" />
+    <file src="Scripts\**" target="contentFiles\any\any\Assets\Tiny Walnut Games\GridLayerEditor\Scripts\" />
+    <file src="*.asmdef" target="contentFiles\any\any\Assets\Tiny Walnut Games\GridLayerEditor\" />
+    <file src="*.asmdef.meta" target="contentFiles\any\any\Assets\Tiny Walnut Games\GridLayerEditor\" />
   </files>
 </package>

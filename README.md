@@ -2,60 +2,80 @@
 
 Tutorial video: https://youtu.be/z6JuMheYuuc?si=yRFe3AO61SIR7Yvg
 
-This package provides a flexible grid layer configuration system for Unity 2D games, supporting platformer, top-down, isometric, and hexagonal grid setups.
+This package provides a flexible grid layer configuration system for Unity 2D games, supporting platformer, top-down, isometric, and hexagonal grid setups. **NEW in v1.1.0**: Automatic layer creation and improved columnar UI!
 
-## Features
+## ✨ Features
 
 - **GridLayerConfig**: ScriptableObject for storing custom grid layer names.
 - **Editor Tools**: Create, edit, and apply grid layer templates via menu and context options.
 - **Grid Creation**: Instantly spawn grids with multiple tilemap layers for various genres and layouts.
+- **🆕 LayerManager**: Automatically creates Unity layers and sorting layers for you!
+- **🆕 Columnar UI**: Improved Grid Layer Editor with better space utilization.
+- **🆕 Smart Validation**: Ensures all layers exist before creating grids.
 
-## Installation
+## 🚀 Installation
 
 1. **Open your Unity project**
 
 2. **Import the package using one of the below methods**
-   - Use the github URL: https://github.com/jmeyer1980/TWG-GridLayerEditor
-   - Use the NuGet package using the dotnet/nuget cmd prompt: `dotnet add package TWG.GridLayerEditor --version 1.0.1`
+   - Use the github URL: `https://github.com/jmeyer1980/TWG-GridLayerEditor`
+   - Use the NuGet package using the dotnet/nuget cmd prompt: `dotnet add package TWG.GridLayerEditor --version 1.1.0`
 
-## Usage
+## 🎯 Quick Start
+
+### 1. **🆕 Automatic Layer Setup (Recommended)**
+Instead of manually creating layers, use the new LayerManager:
+- **For Platformers**: `Tiny Walnut Games > Layer Management > Create Platformer Layers`
+- **For Top-Down Games**: `Tiny Walnut Games > Layer Management > Create Top-Down Layers`
+- **For All Types**: `Tiny Walnut Games > Layer Management > Create All Layers`
+
+This automatically creates all necessary Unity layers AND sorting layers for you!
+
+### 2. **Manual Layer Setup (Legacy)**
+If you prefer manual setup, add these layers to Unity's Layer Manager:
+   - **Platformer Layers**:
+     - Parallax5, Parallax4, Parallax3, Parallax2, Parallax1
+     - Background2, Background1, BackgroundProps
+     - WalkableGround, WalkableProps, Hazards
+     - Foreground, ForegroundProps, RoomMasking, Blending
+   
+   - **Top-Down Layers**:
+     - DeepOcean, Ocean, ShallowWater
+     - Floor, FloorProps
+     - WalkableGround, WalkableProps
+     - OverheadProps, RoomMasking, Blending
+
+## 📋 Usage
 
 1. **Create a GridLayerConfig asset**  
    - Right-click in the Project window: `Assets > Create > Tiny Walnut Games > Grid Layer Config`
    - Or use the Grid Layer Editor window: `Tiny Walnut Games > Edit Grid Layers`
 
-2. **Edit Layer Names**  
-   - Use the Grid Layer Editor window to customize or apply presets.
-     - If you wish to use the default layers, then the following layers should be added to the layer and tag manager
-       - Parallax5
-       - Parallax4
-       - Parallax3
-       - Parallax2
-       - Parallax1
-       - DeepOcean
-       - Ocean
-       - ShallowWater
-       - Background2
-       - Background1
-       - BackgroundProps
-       - Floor
-       - FloorProps
-       - WalkableGround
-       - WalkableProps
-       - Hazards
-       - Foreground
-       - ForegroundProps
-       - OverheadProps
-       - RoomMasking
-       - Blending
-
-
-3. **Create Grids**  
+2. **🆕 Edit Layer Names with New UI**  
+   - Open the improved Grid Layer Editor window: `Tiny Walnut Games > Edit Grid Layers`
+   - **Left Panel**: Select Unity layers with easy-to-use checkboxes
+   - **Right Panel**: Configure settings and apply presets
+   - **Quick Buttons**: "Select All" / "Select None" for rapid selection  
    - Use menu or hierarchy context options under `Tiny Walnut Games` to create:
      - Side-Scrolling Grid
      - Default Top-Down Grid
      - Isometric Top-Down Grid
      - Hexagonal Top-Down Grid
+   - **🆕 Or** use "Create Grid With Selected Layers" in the editor window for custom configurations
+
+## 🛠️ New Layer Management Tools
+
+### Layer Creation Tools
+- `Tiny Walnut Games > Layer Management > Create Platformer Layers`
+- `Tiny Walnut Games > Layer Management > Create Top-Down Layers`  
+- `Tiny Walnut Games > Layer Management > Create All Layers`
+
+### Maintenance Tools
+- `Tiny Walnut Games > Layer Management > Show Layer Report` - Analyze layer usage
+- `Tiny Walnut Games > Layer Management > Clean Unused Layers` - Remove non-standard layers
+
+### Validation
+The system now automatically validates that all layers exist when creating grids and can create missing layers for you!
 
 ## Assembly Definitions
 
