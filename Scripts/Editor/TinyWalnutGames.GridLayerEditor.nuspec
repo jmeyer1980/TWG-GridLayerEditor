@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>TinyWalnutGames.GridLayerEditor</id>
+    <version>1.0.0</version>
+    <authors>Tiny Walnut Games</authors>
+    <owners>Tiny Walnut Games</owners>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/TinyWalnutGames/GridLayerEditor</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Flexible grid layer configuration system for Unity 2D games.</description>
+    <tags>Unity Grid Layer Editor 2D</tags>
+    <dependencies>
+      <!-- Add dependencies if needed -->
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="Assets/Tiny Walnut Games/GridLayerEditor/**" target="content/Assets/Tiny Walnut Games/GridLayerEditor/" />
+  </files>
+</package>
