@@ -3,7 +3,6 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.UIElements;
 
 namespace TinyWalnutGames.GridLayerEditor
 {
@@ -66,6 +65,16 @@ namespace TinyWalnutGames.GridLayerEditor
         /// Array of all Unity layer names.
         /// </summary>
         private string[] unityLayers;
+
+        /// <summary>
+        /// Scroll position for the layer selection area.
+        /// </summary>
+        private Vector2 layerScrollPosition;
+
+        /// <summary>
+        /// Scroll position for the configuration area.
+        /// </summary>
+        private Vector2 configScrollPosition;
 
         /// <summary>
         /// The GridLayerConfig asset currently being edited (used for testing purposes).
@@ -139,7 +148,8 @@ namespace TinyWalnutGames.GridLayerEditor
         [MenuItem("Tiny Walnut Games/Edit Grid Layers")]
         public static void ShowWindow()
         {
-            GetWindow<GridLayerEditorWindow>("Edit Grid Layers");
+            var window = GetWindow<GridLayerEditorWindow>("Edit Grid Layers");
+            window.minSize = new Vector2(600, 400); // Set minimum size for column layout
         }
 
         /// <summary>
@@ -151,14 +161,12 @@ namespace TinyWalnutGames.GridLayerEditor
             unityLayers = GetAllUnityLayerNames();
             layerSelections = new bool[unityLayers.Length];
 
+            // Initialize scroll positions
+            layerScrollPosition = Vector2.zero;
+            configScrollPosition = Vector2.zero;
+
             // Initialize selections from config
-            if (config != null)
-            {
-                for (int i = 0; i < unityLayers.Length; i++)
-                {
-                    layerSelections[i] = config.layerNames.Contains(unityLayers[i]);
-                }
-            }
+            UpdateLayerSelections();
         }
 
         /// <summary>
@@ -182,113 +190,265 @@ namespace TinyWalnutGames.GridLayerEditor
         /// </summary>
         private void OnGUI()
         {
-            // Field to assign or create a GridLayerConfig asset
+            // Main horizontal split layout
+            EditorGUILayout.BeginHorizontal();
+
+            // Left column - Layer Selection (40% of window width)
+            DrawLayerSelectionColumn();
+
+            // Right column - Configuration Controls (60% of window width)
+            DrawConfigurationColumn();
+
+            EditorGUILayout.EndHorizontal();
+        }
+
+        /// <summary>
+        /// Draws the left column containing Unity layer selection toggles.
+        /// </summary>
+        private void DrawLayerSelectionColumn()
+        {
+            EditorGUILayout.BeginVertical(GUILayout.Width(position.width * 0.4f));
+
+            EditorGUILayout.LabelField("Select Unity Layers", EditorStyles.boldLabel);
+            EditorGUILayout.Space();
+
+            // Scrollable area for layer toggles with fixed height
+            layerScrollPosition = EditorGUILayout.BeginScrollView(layerScrollPosition, GUILayout.Height(position.height - 100));
+
+            if (unityLayers != null && layerSelections != null)
+            {
+                bool changed = false;
+                for (int i = 0; i < unityLayers.Length; i++)
+                {
+                    bool newValue = EditorGUILayout.ToggleLeft(unityLayers[i], layerSelections[i]);
+                    if (newValue != layerSelections[i])
+                    {
+                        layerSelections[i] = newValue;
+                        changed = true;
+                    }
+                }
+
+                // Update config when selections change
+                if (changed && config != null)
+                {
+                    Undo.RecordObject(config, "Update Layer Selection");
+                    config.layerNames = unityLayers.Where((layer, idx) => layerSelections[idx]).ToArray();
+                    EditorUtility.SetDirty(config);
+                }
+            }
+
+            EditorGUILayout.EndScrollView();
+
+            // Quick selection buttons at bottom of left column
+            EditorGUILayout.Space();
+            if (GUILayout.Button("Select All"))
+            {
+                SelectAllLayers(true);
+            }
+            if (GUILayout.Button("Select None"))
+            {
+                SelectAllLayers(false);
+            }
+
+            EditorGUILayout.EndVertical();
+        }
+
+        /// <summary>
+        /// Draws the right column containing configuration controls.
+        /// </summary>
+        private void DrawConfigurationColumn()
+        {
+            EditorGUILayout.BeginVertical();
+
+            // Config asset field
+            EditorGUILayout.LabelField("Configuration", EditorStyles.boldLabel);
             config = (GridLayerConfig)EditorGUILayout.ObjectField("Config Asset", config, typeof(GridLayerConfig), false);
 
             if (config == null)
             {
-                EditorGUILayout.HelpBox("Assign or create a GridLayerConfig asset.", MessageType.Info);
-                // Button to create a default platformer config asset
+                EditorGUILayout.Space();
+                EditorGUILayout.HelpBox("Assign or create a GridLayerConfig asset to begin editing layers.", MessageType.Info);
+                
+                EditorGUILayout.Space();
+                EditorGUILayout.LabelField("Create New Config:", EditorStyles.boldLabel);
+                
                 if (GUILayout.Button("Create Platformer Default Config"))
                 {
-                    config = CreateInstance<GridLayerConfig>();
-                    config.layerNames = (string[])PlatformerLayers.Clone();
-                    AssetDatabase.CreateAsset(config, "Assets/GridLayerConfig.asset");
-                    AssetDatabase.SaveAssets();
+                    CreateDefaultConfig(PlatformerLayers, "Platformer");
                 }
-                // Button to create a default top-down config asset
                 if (GUILayout.Button("Create Top-Down Default Config"))
                 {
-                    config = CreateInstance<GridLayerConfig>();
-                    config.layerNames = (string[])TopDownLayers.Clone();
-                    AssetDatabase.CreateAsset(config, "Assets/GridLayerConfig.asset");
-                    AssetDatabase.SaveAssets();
+                    CreateDefaultConfig(TopDownLayers, "TopDown");
                 }
+                
+                EditorGUILayout.EndVertical();
                 return;
             }
 
-            EditorGUILayout.LabelField("Edit Layer Names:", EditorStyles.boldLabel);
+            // Scrollable configuration area
+            configScrollPosition = EditorGUILayout.BeginScrollView(configScrollPosition);
 
-            // Display and edit the layerNames array from the config asset
-            SerializedObject so = new(config);
+            EditorGUILayout.Space();
+            EditorGUILayout.LabelField("Layer Configuration", EditorStyles.boldLabel);
+
+            // Display current layer names in a compact format
+            if (config.layerNames != null && config.layerNames.Length > 0)
+            {
+                EditorGUILayout.LabelField($"Active Layers ({config.layerNames.Length}):", EditorStyles.miniLabel);
+                string layerList = string.Join(", ", config.layerNames.Take(5));
+                if (config.layerNames.Length > 5)
+                    layerList += $"... (+{config.layerNames.Length - 5} more)";
+                EditorGUILayout.LabelField(layerList, EditorStyles.wordWrappedMiniLabel);
+            }
+            else
+            {
+                EditorGUILayout.LabelField("No layers selected", EditorStyles.miniLabel);
+            }
+
+            EditorGUILayout.Space();
+
+            // Preset buttons
+            EditorGUILayout.LabelField("Apply Presets:", EditorStyles.boldLabel);
+            EditorGUILayout.BeginHorizontal();
+            if (GUILayout.Button("Platformer Preset"))
+            {
+                ApplyPreset(PlatformerLayers, "Apply Platformer Preset");
+            }
+            if (GUILayout.Button("Top-Down Preset"))
+            {
+                ApplyPreset(TopDownLayers, "Apply Top-Down Preset");
+            }
+            EditorGUILayout.EndHorizontal();
+
+            EditorGUILayout.Space();
+
+            // Recommended layers info (compact)
+            EditorGUILayout.LabelField("Recommended Layers:", EditorStyles.boldLabel);
+            
+            EditorGUILayout.BeginVertical("box");
+            EditorGUILayout.LabelField("Platformer:", EditorStyles.miniLabel);
+            EditorGUILayout.LabelField(string.Join(", ", PlatformerLayers.Take(8)) + "...", EditorStyles.wordWrappedMiniLabel);
+            
+            EditorGUILayout.Space(2);
+            EditorGUILayout.LabelField("Top-Down:", EditorStyles.miniLabel);
+            EditorGUILayout.LabelField(string.Join(", ", TopDownLayers.Take(8)) + "...", EditorStyles.wordWrappedMiniLabel);
+            EditorGUILayout.EndVertical();
+
+            EditorGUILayout.Space();
+
+            // Action buttons
+            EditorGUILayout.LabelField("Actions:", EditorStyles.boldLabel);
+            
+            if (GUILayout.Button("Create Grid With Selected Layers", GUILayout.Height(30)))
+            {
+                if (config.layerNames != null && config.layerNames.Length > 0)
+                {
+                    TwoDimensionalGridSetup.CreateCustomGrid(config.layerNames);
+                }
+                else
+                {
+                    EditorUtility.DisplayDialog("No Layers Selected", "Please select at least one layer before creating a grid.", "OK");
+                }
+            }
+
+            EditorGUILayout.Space();
+
+            // Advanced editor (collapsible)
+            EditorGUILayout.LabelField("Advanced Editor:", EditorStyles.boldLabel);
+            SerializedObject so = new SerializedObject(config);
             SerializedProperty layersProp = so.FindProperty("layerNames");
-            EditorGUILayout.PropertyField(layersProp, true);
-            so.ApplyModifiedProperties();
-
-            EditorGUILayout.Space();
-
-            // Button to apply platformer preset to the config asset
-            if (GUILayout.Button("Apply Platformer Preset"))
+            EditorGUILayout.PropertyField(layersProp, new GUIContent("Layer Names Array"), true);
+            
+            if (so.ApplyModifiedProperties())
             {
-                Undo.RecordObject(config, "Apply Platformer Preset");
-                config.layerNames = (string[])PlatformerLayers.Clone();
-                EditorUtility.SetDirty(config);
-            }
-            // Button to apply top-down preset to the config asset
-            if (GUILayout.Button("Apply Top-Down Preset"))
-            {
-                Undo.RecordObject(config, "Apply Top-Down Preset");
-                config.layerNames = (string[])TopDownLayers.Clone();
-                EditorUtility.SetDirty(config);
+                // Update layer selections when array is modified directly
+                UpdateLayerSelections();
             }
 
-            EditorGUILayout.Space();
+            EditorGUILayout.EndScrollView();
+            EditorGUILayout.EndVertical();
+        }
 
-            // Button to create a grid in the scene using the current config's layers
-            if (GUILayout.Button("Create Grid With These Layers"))
+        /// <summary>
+        /// Creates a default configuration asset with the specified layers.
+        /// </summary>
+        /// <param name="defaultLayers">Array of default layer names.</param>
+        /// <param name="configType">Type identifier for the config (e.g., "Platformer", "TopDown").</param>
+        private void CreateDefaultConfig(string[] defaultLayers, string configType)
+        {
+            string path = EditorUtility.SaveFilePanelInProject(
+                $"Create {configType} Grid Layer Config", 
+                $"GridLayerConfig_{configType}", 
+                "asset", 
+                $"Choose location for {configType} Grid Layer Config");
+                
+            if (!string.IsNullOrEmpty(path))
             {
-                TwoDimensionalGridSetup.CreateCustomGrid(config.layerNames);
-            }
-
-            EditorGUILayout.Space();
-
-            // Unity layer selection UI
-            EditorGUILayout.LabelField("Select Unity Layers for Grid", EditorStyles.boldLabel);
-            for (int i = 0; i < unityLayers.Length; i++)
-            {
-                layerSelections[i] = EditorGUILayout.ToggleLeft(unityLayers[i], layerSelections[i]);
-            }
-
-            // Update config.layerNames when selection changes
-            if (GUI.changed)
-            {
-                config.layerNames = unityLayers.Where((layer, idx) => layerSelections[idx]).ToArray();
-                EditorUtility.SetDirty(config);
-            }
-
-            EditorGUILayout.Space();
-
-            // Recommended layers display
-            EditorGUILayout.HelpBox("Recommended Platformer Layers:\n" + string.Join(", ", PlatformerLayers), MessageType.Info);
-            EditorGUILayout.HelpBox("Recommended Top Down Layers:\n" + string.Join(", ", TopDownLayers), MessageType.Info);
-
-            EditorGUILayout.Space();
-
-            // Set recommended layers buttons
-            if (GUILayout.Button("Set Recommended Platformer Layers"))
-            {
-                SetRecommendedLayers(PlatformerLayers);
-            }
-            if (GUILayout.Button("Set Recommended Top Down Layers"))
-            {
-                SetRecommendedLayers(TopDownLayers);
+                config = CreateInstance<GridLayerConfig>();
+                config.layerNames = (string[])defaultLayers.Clone();
+                AssetDatabase.CreateAsset(config, path);
+                AssetDatabase.SaveAssets();
+                UpdateLayerSelections();
             }
         }
 
         /// <summary>
-        /// Sets the recommended layers in the config and updates the UI.
+        /// Applies a preset to the current configuration.
         /// </summary>
-        /// <param name="recommended">Array of recommended layer names.</param>
-        private void SetRecommendedLayers(string[] recommended)
+        /// <param name="presetLayers">Array of preset layer names.</param>
+        /// <param name="undoName">Name for the undo operation.</param>
+        private void ApplyPreset(string[] presetLayers, string undoName)
         {
+            if (config == null) return;
+            
+            Undo.RecordObject(config, undoName);
+            config.layerNames = (string[])presetLayers.Clone();
+            EditorUtility.SetDirty(config);
+            UpdateLayerSelections();
+        }
+
+        /// <summary>
+        /// Selects or deselects all layers.
+        /// </summary>
+        /// <param name="selectAll">True to select all layers, false to deselect all.</param>
+        private void SelectAllLayers(bool selectAll)
+        {
+            if (config == null || layerSelections == null) return;
+            
+            Undo.RecordObject(config, selectAll ? "Select All Layers" : "Deselect All Layers");
+            
+            for (int i = 0; i < layerSelections.Length; i++)
+            {
+                layerSelections[i] = selectAll;
+            }
+            
+            if (selectAll)
+            {
+                config.layerNames = (string[])unityLayers.Clone();
+            }
+            else
+            {
+                config.layerNames = new string[0];
+            }
+            
+            EditorUtility.SetDirty(config);
+        }
+
+        /// <summary>
+        /// Updates the layer selection checkboxes based on the current config.
+        /// </summary>
+        private void UpdateLayerSelections()
+        {
+            if (config == null || unityLayers == null || layerSelections == null) return;
+            
             for (int i = 0; i < unityLayers.Length; i++)
             {
-                layerSelections[i] = recommended.Contains(unityLayers[i]);
+                layerSelections[i] = config.layerNames != null && config.layerNames.Contains(unityLayers[i]);
             }
-            config.layerNames = unityLayers.Where((layer, idx) => layerSelections[idx]).ToArray();
-            EditorUtility.SetDirty(config);
+            
             Repaint();
         }
+
     }
 }
 #endif

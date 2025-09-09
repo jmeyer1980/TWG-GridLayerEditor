@@ -16,6 +16,29 @@ This package provides a flexible grid layer configuration system for Unity 2D ga
 
 2. **Edit Layer Names**  
    - Use the Grid Layer Editor window to customize or apply presets.
+     - If you wish to use the default layers, then the following layers should be added to the layer and tag manager
+       - Parallax5
+       - Parallax4
+       - Parallax3
+       - Parallax2
+       - Parallax1
+       - DeepOcean
+       - Ocean
+       - ShallowWater
+       - Background2
+       - Background1
+       - BackgroundProps
+       - Floor
+       - FloorProps
+       - WalkableGround
+       - WalkableProps
+       - Hazards
+       - Foreground
+       - ForegroundProps
+       - OverheadProps
+       - RoomMasking
+       - Blending
+
 
 3. **Create Grids**  
    - Use menu or hierarchy context options under `Tiny Walnut Games` to create:
@@ -26,13 +49,13 @@ This package provides a flexible grid layer configuration system for Unity 2D ga
 
 ## Assembly Definitions
 
-- **TinyWalnutGames.GridLayerConfig**: Runtime scripts (ScriptableObject).
 - **TinyWalnutGames.GridLayerEditor**: Editor scripts (menu, window, grid creation).
 
 ## Requirements
 
 - Unity 2021.3 or newer recommended.
 - 2D Tilemap package.
+- 2D Tilemap Extras package (recommended but not required).
 
 ## Example
 

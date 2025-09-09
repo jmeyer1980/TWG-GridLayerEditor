@@ -3,6 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using System;
+using System.Linq;
 
 namespace TinyWalnutGames.GridLayerEditor
 {
@@ -83,6 +84,28 @@ namespace TinyWalnutGames.GridLayerEditor
         }
 
         /// <summary>
+        /// Attempts to load a GridLayerConfig asset and returns its layerNames if available and different from defaults.
+        /// Otherwise, returns the provided defaultLayers.
+        /// </summary>
+        private static string[] GetCustomOrDefaultLayers(string[] topDownDefaultLayers)
+        {
+            var config = AssetDatabase.LoadAssetAtPath<GridLayerConfig>("Assets/GridLayerConfig.asset");
+            string[] platformerDefaultLayers = Enum.GetNames(typeof(SideScrollingLayers));
+
+            if (config != null && config.layerNames != null && config.layerNames.Length > 0)
+            {
+                // If custom layers are different from both platformer and top-down defaults, use custom
+                if (!config.layerNames.SequenceEqual(platformerDefaultLayers) &&
+                    !config.layerNames.SequenceEqual(topDownDefaultLayers))
+                {
+                    return config.layerNames;
+                }
+            }
+            // Otherwise, use the provided top-down default layers
+            return topDownDefaultLayers;
+        }
+
+        /// <summary>
         /// Creates a top-down grid in the scene with top-down layers.
         /// </summary>
         [MenuItem("Tiny Walnut Games/Create Default Top-Down Grid")]
@@ -90,13 +113,12 @@ namespace TinyWalnutGames.GridLayerEditor
         {
             var gridGO = new GameObject("Top-Down Grid", typeof(Grid));
             gridGO.transform.position = Vector3.zero;
-            int layerCount = Enum.GetValues(typeof(TopDownLayers)).Length;
-            int index = 0;
-            foreach (TopDownLayers layer in Enum.GetValues(typeof(TopDownLayers)))
+            var layers = GetCustomOrDefaultLayers(Enum.GetNames(typeof(TopDownLayers)));
+            int layerCount = layers.Length;
+            for (int i = 0; i < layerCount; i++)
             {
-                int flippedZ = layerCount - 1 - index;
-                CreateTilemapLayer(gridGO.transform, layer.ToString(), flippedZ);
-                index++;
+                int flippedZ = layerCount - 1 - i;
+                CreateTilemapLayer(gridGO.transform, layers[i], flippedZ);
             }
         }
 
@@ -151,11 +173,12 @@ namespace TinyWalnutGames.GridLayerEditor
             gridGO.transform.position = Vector3.zero;
             var grid = gridGO.GetComponent<Grid>();
             grid.cellLayout = GridLayout.CellLayout.Isometric;
-            int layerCount = IsometricTopDownLayers.Length;
+            var layers = GetCustomOrDefaultLayers(IsometricTopDownLayers);
+            int layerCount = layers.Length;
             for (int i = 0; i < layerCount; i++)
             {
                 int flippedZ = layerCount - 1 - i;
-                CreateTilemapLayer(gridGO.transform, IsometricTopDownLayers[i], flippedZ);
+                CreateTilemapLayer(gridGO.transform, layers[i], flippedZ);
             }
         }
 
@@ -178,11 +201,12 @@ namespace TinyWalnutGames.GridLayerEditor
             gridGO.transform.position = Vector3.zero;
             var grid = gridGO.GetComponent<Grid>();
             grid.cellLayout = GridLayout.CellLayout.Hexagon;
-            int layerCount = HexTopDownLayers.Length;
+            var layers = GetCustomOrDefaultLayers(HexTopDownLayers);
+            int layerCount = layers.Length;
             for (int i = 0; i < layerCount; i++)
             {
                 int flippedZ = layerCount - 1 - i;
-                CreateTilemapLayer(gridGO.transform, HexTopDownLayers[i], flippedZ);
+                CreateTilemapLayer(gridGO.transform, layers[i], flippedZ);
             }
         }
 
